@@ -35,6 +35,35 @@ export default function Home() {
     },
   ]
 
+  const pricingTiers = [
+    {
+      key: 'single',
+      name: 'Single Download',
+      price: '$10 one-time',
+      emphasis: false,
+      cta: 'Choose Single Download',
+      buttonColor: 'bg-gray-700 hover:bg-gray-800',
+    },
+    {
+      key: 'review',
+      name: 'Download + Review',
+      price: '$30 one-time',
+      emphasis: true,
+      cta: 'Choose Download + Review',
+      buttonColor: 'bg-blue-600 hover:bg-blue-700',
+    },
+    {
+      key: 'premium',
+      name: 'Premium Agent Support',
+      price: '$50 one-time',
+      emphasis: false,
+      cta: 'Choose Premium Support',
+      buttonColor: 'bg-indigo-600 hover:bg-indigo-700',
+    },
+  ]
+
+  const planColumnWidth = `${(74 / pricingTiers.length).toFixed(2)}%`
+
   return (
     <div className="min-h-screen">
       {/* Navigation */}
@@ -256,17 +285,19 @@ export default function Home() {
 
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full border-separate" style={{ borderSpacing: 0 }}>
+              <table className="min-w-full border-separate table-fixed" style={{ borderSpacing: 0 }}>
+                <colgroup>
+                  <col style={{ width: '26%' }} />
+                  {pricingTiers.map((tier) => (
+                    <col key={`col-${tier.key}`} style={{ width: planColumnWidth }} />
+                  ))}
+                </colgroup>
                 <thead className="bg-gray-900 text-white">
                   <tr>
                     <th className="py-4 px-6 text-left text-sm font-semibold uppercase tracking-wider">Features</th>
-                    {[
-                      { name: 'Single Download', price: '$10 one-time', emphasis: false },
-                      { name: 'Download + Review', price: '$30 one-time', emphasis: true },
-                      { name: 'Premium Agent Support', price: '$50 one-time', emphasis: false },
-                    ].map((tier) => (
+                    {pricingTiers.map((tier) => (
                       <th
-                        key={tier.name}
+                        key={tier.key}
                         className={`py-4 px-6 text-center text-sm font-semibold uppercase tracking-wider ${
                           tier.emphasis ? 'bg-blue-600' : ''
                         }`}
@@ -279,39 +310,39 @@ export default function Home() {
                 </thead>
                 <tbody>
                   {[
-                    {
-                      label: 'Offer letter download',
-                      values: [true, true, true],
-                    },
-                    {
-                      label: 'Licensed agent review',
-                      values: [false, true, true],
-                    },
-                    {
-                      label: 'AI-generated content + filing guidance',
-                      values: [true, true, true],
-                    },
-                    {
-                      label: 'Chatbot support (process questions)',
-                      values: [true, true, true],
-                    },
-                    {
-                      label: 'Full agent consultation',
-                      values: [false, false, true],
-                    },
-                    {
-                      label: 'On-demand agent Q&A for property',
-                      values: [false, false, true],
-                    },
-                    {
-                      label: 'Best for',
-                      values: [
-                        'DIY buyers who need paperwork fast',
-                        'First-time buyers needing peace of mind',
-                        'Buyers wanting comprehensive guidance without full representation',
-                      ],
-                      isText: true,
-                    },
+                      {
+                        label: 'Offer letter download',
+                        values: [true, true, true],
+                      },
+                      {
+                        label: 'Licensed agent review',
+                        values: [false, true, true],
+                      },
+                      {
+                        label: 'AI-generated content + filing guidance',
+                        values: [true, true, true],
+                      },
+                      {
+                        label: 'Chatbot support (process questions)',
+                        values: [true, true, true],
+                      },
+                      {
+                        label: 'Full agent consultation',
+                        values: [false, false, true],
+                      },
+                      {
+                        label: 'On-demand agent Q&A for property',
+                        values: [false, false, true],
+                      },
+                      {
+                        label: 'Best for',
+                        values: [
+                          'DIY buyers who need paperwork fast',
+                          'First-time buyers needing peace of mind',
+                          'Buyers wanting comprehensive guidance without full representation',
+                        ],
+                        isText: true,
+                      },
                   ].map((row) => (
                     <tr key={row.label} className="border-t border-gray-200">
                       <td className="py-5 px-6 text-gray-900 font-medium text-base bg-gray-50">{row.label}</td>
@@ -332,23 +363,21 @@ export default function Home() {
                       ))}
                     </tr>
                   ))}
+                  <tr className="border-t border-gray-200">
+                    <td className="py-6 px-6 bg-gray-50" />
+                    {pricingTiers.map((tier) => (
+                      <td key={`cta-${tier.key}`} className="py-6 px-6 text-center">
+                        <Link
+                          href="/property"
+                          className={`${tier.buttonColor} text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition`}
+                        >
+                          {tier.cta}
+                        </Link>
+                      </td>
+                    ))}
+                  </tr>
                 </tbody>
               </table>
-            </div>
-            <div className="p-6 border-t border-gray-200 flex flex-wrap gap-4 justify-center">
-              {[
-                { label: 'Choose Single Download', color: 'bg-gray-700 hover:bg-gray-800' },
-                { label: 'Choose Download + Review', color: 'bg-blue-600 hover:bg-blue-700' },
-                { label: 'Choose Premium Support', color: 'bg-indigo-600 hover:bg-indigo-700' },
-              ].map((cta) => (
-                <Link
-                  key={cta.label}
-                  href="/property"
-                  className={`${cta.color} text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition`}
-                >
-                  {cta.label}
-                </Link>
-              ))}
             </div>
           </div>
 
