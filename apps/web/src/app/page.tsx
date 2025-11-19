@@ -1,6 +1,40 @@
 import Link from 'next/link'
+import { FaqSection } from '@/components/FaqSection'
 
 export default function Home() {
+  const faqItems = [
+    {
+      id: 'represent',
+      question: 'Do you represent me as an agent?',
+      answer:
+        'No. When you download offer letters from us, you are choosing to represent yourself as the buyer. We generate professional documents and provide guidance, but you remain the acting agent for your transaction. If you want formal representation through an agent-client relationship, please contact us so we can connect you with a licensed agent and brokerage for full-service support.',
+    },
+    {
+      id: 'self-represent',
+      question: 'Can I self-represent?',
+      answer:
+        'Absolutely. Self-representation is becoming more common as buyers gain access to listing data, market insights, and AI assistants like ours. With the right tools, confident buyers can negotiate directly, save on commissions, and maintain control of the process. We built this product specifically to empower modern buyers who want to self-represent with professional-grade paperwork and guidance.',
+    },
+    {
+      id: 'commission',
+      question: "If the seller offers a buyer's agent commission, can I receive it?",
+      answer:
+        "Not directly, but you can capture that value through negotiation. If the seller is offering a buyer's agent commission, we can help you negotiate a lower purchase price or seller credit in lieu of the commission. Our automated offer letter makes it easy to present this structure professionally so you keep more money in your pocket.",
+    },
+    {
+      id: 'first-time',
+      question: "It's my first time buying a home—can I still do this?",
+      answer:
+        'Definitely. We guide you through every step. With flexible pricing, you only pay for the level of support you need: from AI-generated offer letters to optional licensed agent reviews, all the way up to full representation if you decide you want an agent by your side. Start with the self-service experience, and if you ever feel uncertain, upgrade to the tier that gives you direct agent help—or contact us for full representation.',
+    },
+    {
+      id: 'nar-lawsuit',
+      question: "I thought sellers pay the buyer's agent commission. Why should I pay?",
+      answer:
+        'The industry is changing fast. After the recent NAR settlement, many listings no longer offer traditional buyer-agent commissions, and most brokerages now charge buyers directly for representation. Instead of paying thousands in brokerage fees or hidden “representation” charges, our à-la-carte model lets you pay only for the support you need. Even our most comprehensive packages cost a fraction of what traditional buyer representation now demands.',
+    },
+  ]
+
   return (
     <div className="min-h-screen">
       {/* Navigation */}
@@ -193,7 +227,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-700 mb-4 italic">
-                "The agent review option gave me peace of mind. For just $20, a licensed agent reviewed my offer 
+                "The agent review option gave me peace of mind. For just $30, a licensed agent reviewed my offer 
                 before I submitted it. Best of both worlds—affordable and professional."
               </p>
               <div className="flex items-center">
@@ -386,56 +420,7 @@ export default function Home() {
             <p className="text-xl text-gray-600">Everything you need to know before you self-represent.</p>
           </div>
 
-          <div className="max-w-4xl mx-auto space-y-6">
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">Do you represent me as an agent?</h3>
-              <p className="text-gray-700 leading-relaxed">
-                No. When you download offer letters from us, you are choosing to represent yourself as the buyer. We generate
-                professional documents and provide guidance, but you remain the acting agent for your transaction. If you want
-                formal representation through an agent-client relationship, please contact us so we can connect you with a licensed
-                agent and brokerage for full-service support.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">Can I self-represent?</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Absolutely. Self-representation is becoming more common as buyers gain access to listing data, market insights,
-                and AI assistants like ours. With the right tools, confident buyers can negotiate directly, save on commissions,
-                and maintain control of the process. We built this product specifically to empower modern buyers who want to
-                self-represent with professional-grade paperwork and guidance.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">If the seller offers a buyer agent commission, can I receive it?</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Not directly, but you can capture that value through negotiation. If the seller is offering a buyer&apos;s agent commission,
-                we can help you negotiate a lower purchase price or seller credit in lieu of the commission. Our automated offer letter makes
-                it easy to present this structure professionally so you keep more money in your pocket.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">It&apos;s my first time buying a home—can I still do this?</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Definitely. We guide you through every step. With flexible pricing, you only pay for the level of support you need:
-                from AI-generated offer letters to optional licensed agent reviews, all the way up to full representation if you decide
-                you want an agent by your side. Start with the self-service experience, and if you ever feel uncertain, upgrade to the
-                tier that gives you direct agent help—or contact us for full representation.
-              </p>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">I thought sellers pay the buyer&apos;s agent commission. Why should I pay?</h3>
-              <p className="text-gray-700 leading-relaxed">
-                The industry is changing fast. After the recent NAR settlement, many listings no longer offer traditional buyer-agent
-                commissions, and most brokerages now charge buyers directly for representation. Instead of paying thousands in
-                brokerage fees or hidden “representation” charges, our à-la-carte model lets you pay only for the support you need.
-                Even our most comprehensive packages cost a fraction of what traditional buyer representation now demands.
-              </p>
-            </div>
-          </div>
+          <FaqSection items={faqItems} />
         </div>
       </section>
 
