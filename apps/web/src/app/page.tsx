@@ -15,6 +15,7 @@ export default function Home() {
               <a href="#about" className="text-gray-700 hover:text-blue-600 transition">About</a>
               <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition">Testimonials</a>
               <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition">Pricing</a>
+              <a href="#faq" className="text-gray-700 hover:text-blue-600 transition">FAQ</a>
             </div>
             <Link
               href="/property"
@@ -215,127 +216,146 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
             <p className="text-xl text-gray-600">
-              Pay only for what you need. No hidden fees, no long-term commitments.
+              Pay only for what you need. Every tier includes AI offer letters and a chatbot to answer process questions.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {/* Single Download */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200">
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">Single Download</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-900">$10</span>
-                <span className="text-gray-600"> one-time</span>
-              </div>
-              <ul className="space-y-3 mb-6 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Download offer letter</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>AI-generated content</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>No subscription</span>
-                </li>
-              </ul>
-              <Link
-                href="/property"
-                className="block w-full bg-gray-600 text-white text-center px-4 py-3 rounded-lg hover:bg-gray-700 transition"
-              >
-                Get Started
-              </Link>
-            </div>
 
-            {/* Single Download + Review */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-blue-500 relative">
-              <div className="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 rounded-bl-lg text-sm font-semibold">
-                Popular
-              </div>
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">Download + Review</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-900">$30</span>
-                <span className="text-gray-600"> one-time</span>
-              </div>
-              <ul className="space-y-3 mb-6 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Everything in Single Download</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Licensed agent review</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Professional feedback</span>
-                </li>
-              </ul>
-              <Link
-                href="/property"
-                className="block w-full bg-blue-600 text-white text-center px-4 py-3 rounded-lg hover:bg-blue-700 transition"
-              >
-                Get Started
-              </Link>
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full border-separate" style={{ borderSpacing: 0 }}>
+                <thead className="bg-gray-900 text-white">
+                  <tr>
+                    <th className="py-4 px-6 text-left text-sm font-semibold uppercase tracking-wider">Features</th>
+                    {[
+                      { name: 'Single Download', price: '$10 one-time', emphasis: false },
+                      { name: 'Download + Review', price: '$30 one-time', emphasis: true },
+                      { name: 'Premium Agent Support', price: '$50 one-time', emphasis: false },
+                    ].map((tier) => (
+                      <th
+                        key={tier.name}
+                        className={`py-4 px-6 text-center text-sm font-semibold uppercase tracking-wider ${
+                          tier.emphasis ? 'bg-blue-600' : ''
+                        }`}
+                      >
+                        <div className="text-lg font-bold">{tier.name}</div>
+                        <div className="text-sm font-normal opacity-90">{tier.price}</div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      label: 'Offer letter download',
+                      values: [true, true, true],
+                    },
+                    {
+                      label: 'Licensed agent review',
+                      values: [false, true, true],
+                    },
+                    {
+                      label: 'AI-generated content + filing guidance',
+                      values: [true, true, true],
+                    },
+                    {
+                      label: 'Chatbot support (process questions)',
+                      values: [true, true, true],
+                    },
+                    {
+                      label: 'Full agent consultation',
+                      values: [false, false, true],
+                    },
+                    {
+                      label: 'On-demand agent Q&A for property',
+                      values: [false, false, true],
+                    },
+                    {
+                      label: 'Best for',
+                      values: [
+                        'DIY buyers who need paperwork fast',
+                        'First-time buyers needing peace of mind',
+                        'Buyers wanting comprehensive guidance without full representation',
+                      ],
+                      isText: true,
+                    },
+                  ].map((row) => (
+                    <tr key={row.label} className="border-t border-gray-200">
+                      <td className="py-5 px-6 text-gray-900 font-medium text-base bg-gray-50">{row.label}</td>
+                      {row.values.map((value, idx) => (
+                        <td key={`${row.label}-${idx}`} className="py-5 px-6 text-center text-gray-800">
+                          {row.isText ? (
+                            <span className="text-sm text-gray-600">{value as string}</span>
+                          ) : value ? (
+                            <span className="text-2xl" role="img" aria-label="included">
+                              ✅
+                            </span>
+                          ) : (
+                            <span className="text-2xl text-gray-300" role="img" aria-label="not included">
+                              —
+                            </span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-
-            {/* Monthly Subscription */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200">
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">Monthly Subscription</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-900">$20</span>
-                <span className="text-gray-600">/month</span>
-              </div>
-              <ul className="space-y-3 mb-6 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Unlimited offer letters</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>AI agent access</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Cancel anytime</span>
-                </li>
-              </ul>
-              <Link
-                href="/property"
-                className="block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition"
-              >
-                Subscribe
-              </Link>
+            <div className="p-6 border-t border-gray-200 flex flex-wrap gap-4 justify-center">
+              {[
+                { label: 'Choose Single Download', color: 'bg-gray-700 hover:bg-gray-800' },
+                { label: 'Choose Download + Review', color: 'bg-blue-600 hover:bg-blue-700' },
+                { label: 'Choose Premium Support', color: 'bg-indigo-600 hover:bg-indigo-700' },
+              ].map((cta) => (
+                <Link
+                  key={cta.label}
+                  href="/property"
+                  className={`${cta.color} text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition`}
+                >
+                  {cta.label}
+                </Link>
+              ))}
             </div>
+          </div>
 
-            {/* Agent Review Only */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200">
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">Agent Review</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-900">$20</span>
-                <span className="text-gray-600"> per review</span>
+          {/* Subscription row */}
+          <div className="mt-12">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-green-500 relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow">
+                Best Value for Investors
               </div>
-              <ul className="space-y-3 mb-6 text-gray-700">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Licensed agent review</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Professional feedback</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>One-time fee</span>
-                </li>
-              </ul>
-              <Link
-                href="/property"
-                className="block w-full bg-purple-600 text-white text-center px-4 py-3 rounded-lg hover:bg-purple-700 transition"
-              >
-                Request Review
-              </Link>
+              <div className="grid md:grid-cols-3 gap-6 items-center">
+                <div>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-2">$20 / month</h3>
+                  <p className="text-gray-600 mb-4">Unlimited AI offer letters + chatbot access</p>
+                  <Link
+                    href="/property"
+                    className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                  >
+                    Subscribe
+                  </Link>
+                </div>
+                <div className="md:col-span-2">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="bg-green-50 border border-green-100 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Included</h4>
+                      <ul className="space-y-2 text-gray-700 text-sm">
+                        <li>✔️ Unlimited AI-generated offer letters</li>
+                        <li>✔️ Chatbot + AI concierge for process questions</li>
+                        <li>✔️ Priority support and roadmap access</li>
+                      </ul>
+                    </div>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Discounted add-ons</h4>
+                      <ul className="space-y-2 text-gray-700 text-sm">
+                        <li>+ $15 per property for licensed agent review</li>
+                        <li>+ $35 per property for agent walkthrough & on-demand Q&A</li>
+                        <li>Ideal for investors making multiple offers</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -353,6 +373,57 @@ export default function Home() {
               >
                 Contact Us
               </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+            <p className="text-xl text-gray-600">Everything you need to know before you self-represent.</p>
+          </div>
+
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">Do you represent me as an agent?</h3>
+              <p className="text-gray-700 leading-relaxed">
+                No. When you download offer letters from us, you are choosing to represent yourself as the buyer. We generate
+                professional documents and provide guidance, but you remain the acting agent for your transaction. If you want
+                formal representation through an agent-client relationship, please contact us so we can connect you with a licensed
+                agent and brokerage for full-service support.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">Can I self-represent?</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Absolutely. Self-representation is becoming more common as buyers gain access to listing data, market insights,
+                and AI assistants like ours. With the right tools, confident buyers can negotiate directly, save on commissions,
+                and maintain control of the process. We built this product specifically to empower modern buyers who want to
+                self-represent with professional-grade paperwork and guidance.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">If the seller offers a buyer agent commission, can I receive it?</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Not directly, but you can capture that value through negotiation. If the seller is offering a buyer&apos;s agent commission,
+                we can help you negotiate a lower purchase price or seller credit in lieu of the commission. Our automated offer letter makes
+                it easy to present this structure professionally so you keep more money in your pocket.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">It&apos;s my first time buying a home—can I still do this?</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Definitely. We guide you through every step. With flexible pricing, you only pay for the level of support you need:
+                from AI-generated offer letters to optional licensed agent reviews, all the way up to full representation if you decide
+                you want an agent by your side. Start with the self-service experience, and if you ever feel uncertain, upgrade to the
+                tier that gives you direct agent help—or contact us for full representation.
+              </p>
             </div>
           </div>
         </div>
