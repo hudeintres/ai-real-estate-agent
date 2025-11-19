@@ -1,0 +1,242 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+interface PropertyData {
+  id: string
+  address: string
+  price: number | null
+  daysOnMarket: number | null
+  mlsNumber: string | null
+}
+
+export default function CreateOfferPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const propertyId = searchParams.get('propertyId')
+
+  const [property, setProperty] = useState<PropertyData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+
+  // Form state
+  const [financingType, setFinancingType] = useState('conventional')
+  const [offerPrice, setOfferPrice] = useState('')
+  const [contingencies, setContingencies] = useState({
+    inspection: true,
+    appraisal: true,
+    financing: true,
+  })
+  const [timelinePreferences, setTimelinePreferences] = useState({
+    closingDate: '',
+    possessionDate: '',
+  })
+  const [concessions, setConcessions] = useState({
+    sellerCredits: '',
+    repairs: '',
+  })
+  const [additionalNotes, setAdditionalNotes] = useState('')
+
+  useEffect(() => {
+    if (!propertyId) {
+      router.push('/property')
+      return
+    }
+
+    fetch(`/api/property/${propertyId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProperty(data)
+        if (data.price) {
+          setOfferPrice(data.price.toString())
+        }
+      })
+      .catch(() => router.push('/property'))
+      .finally(() => setLoading(false))
+  }, [propertyId, router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+
+    try {
+      const response = await fetch('/api/offer/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          propertyId,
+          financingType,
+          offerPrice: parseFloat(offerPrice),
+          contingencies,
+          timelinePreferences,
+          concessions,
+          additionalNotes,
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to create offer')
+
+      const data = await response.json()
+      router.push(`/offer/${data.offerId}/preview`)
+    } catch (err) {
+      alert('Failed to create offer. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen p-8">
+        <div className="max-w-2xl mx-auto">Loading...</div>
+      </main>
+    )
+  }
+
+  if (!property) {
+    return null
+  }
+
+  return (
+    <main className="min-h-screen p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Step 2: Offer Details</h1>
+
+        <div className="bg-gray-50 p-4 rounded-lg mb-6">
+          <h2 className="font-semibold mb-2">Property Information</h2>
+          <p className="text-sm text-gray-600">{property.address}</p>
+          {property.price && <p className="text-sm text-gray-600">List Price: ${property.price.toLocaleString()}</p>}
+          {property.mlsNumber && <p className="text-sm text-gray-600">MLS #: {property.mlsNumber}</p>}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="financingType" className="block text-sm font-medium mb-2">
+              Financing Type
+            </label>
+            <select
+              id="financingType"
+              value={financingType}
+              onChange={(e) => setFinancingType(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="cash">Cash</option>
+              <option value="conventional">Conventional</option>
+              <option value="fha">FHA</option>
+              <option value="va">VA</option>
+              <option value="usda">USDA</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="offerPrice" className="block text-sm font-medium mb-2">
+              Offer Price ($)
+            </label>
+            <input
+              id="offerPrice"
+              type="number"
+              step="0.01"
+              value={offerPrice}
+              onChange={(e) => setOfferPrice(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Contingencies</label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={contingencies.inspection}
+                  onChange={(e) =>
+                    setContingencies({ ...contingencies, inspection: e.target.checked })
+                  }
+                  className="mr-2"
+                />
+                Inspection
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={contingencies.appraisal}
+                  onChange={(e) =>
+                    setContingencies({ ...contingencies, appraisal: e.target.checked })
+                  }
+                  className="mr-2"
+                />
+                Appraisal
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={contingencies.financing}
+                  onChange={(e) =>
+                    setContingencies({ ...contingencies, financing: e.target.checked })
+                  }
+                  className="mr-2"
+                />
+                Financing
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="closingDate" className="block text-sm font-medium mb-2">
+              Preferred Closing Date
+            </label>
+            <input
+              id="closingDate"
+              type="date"
+              value={timelinePreferences.closingDate}
+              onChange={(e) =>
+                setTimelinePreferences({ ...timelinePreferences, closingDate: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="sellerCredits" className="block text-sm font-medium mb-2">
+              Seller Credits / Concessions ($)
+            </label>
+            <input
+              id="sellerCredits"
+              type="number"
+              step="0.01"
+              value={concessions.sellerCredits}
+              onChange={(e) =>
+                setConcessions({ ...concessions, sellerCredits: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="additionalNotes" className="block text-sm font-medium mb-2">
+              Additional Notes
+            </label>
+            <textarea
+              id="additionalNotes"
+              value={additionalNotes}
+              onChange={(e) => setAdditionalNotes(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {submitting ? 'Creating Offer...' : 'Generate Offer Letter'}
+          </button>
+        </form>
+      </div>
+    </main>
+  )
+}
+
