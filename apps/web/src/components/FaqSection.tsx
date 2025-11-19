@@ -34,7 +34,7 @@ export function FaqSection({ items }: FaqSectionProps) {
               <span className="text-2xl text-gray-400">{isOpen ? '−' : '+'}</span>
             </button>
             {isOpen && (
-              <div className="px-6 pb-6 text-gray-700 leading-relaxed border-t border-gray-100">
+              <div className="px-6 pb-6 text-gray-700 leading-relaxed border-t border-gray-100 whitespace-pre-line">
                 {item.answer}
               </div>
             )}

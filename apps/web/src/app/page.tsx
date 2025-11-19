@@ -19,7 +19,7 @@ export default function Home() {
       id: 'commission',
       question: "If the seller offers a buyer's agent commission, can I receive it?",
       answer:
-        "Not directly, but you can capture that value through negotiation. If the seller is offering a buyer's agent commission, we can help you negotiate a lower purchase price or seller credit in lieu of the commission. Our automated offer letter makes it easy to present this structure professionally so you keep more money in your pocket.",
+        "Only licensed agents can receive buyer's agent commissions. If you wish to receive a portion of the buyer's agent commision and save on up to 2% of the purchase price, please contact us for direct representation. \n\nIf you are self-representing, you can potentially capture the buyer's agent commission through negotiation on other aspects, such as a lower purchase price or other seller concessions. If the seller is offering a buyer's agent commission, our AI tools can generate an offer letter that keeps more money in your pocket.",
     },
     {
       id: 'first-time',
