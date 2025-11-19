@@ -425,6 +425,16 @@ export default function Home() {
                 tier that gives you direct agent help—or contact us for full representation.
               </p>
             </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">I thought sellers pay the buyer&apos;s agent commission. Why should I pay?</h3>
+              <p className="text-gray-700 leading-relaxed">
+                The industry is changing fast. After the recent NAR settlement, many listings no longer offer traditional buyer-agent
+                commissions, and most brokerages now charge buyers directly for representation. Instead of paying thousands in
+                brokerage fees or hidden “representation” charges, our à-la-carte model lets you pay only for the support you need.
+                Even our most comprehensive packages cost a fraction of what traditional buyer representation now demands.
+              </p>
+            </div>
           </div>
         </div>
       </section>
