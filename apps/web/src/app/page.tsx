@@ -342,7 +342,7 @@ export default function Home() {
           {/* Full Representation CTA */}
           <div className="mt-12 text-center">
             <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold mb-3">Need Full Representation?</h3>
+              <h3 className="text-2xl font-bold mb-3 text-gray-800">Need Full Representation?</h3>
               <p className="text-gray-700 mb-6">
                 For complete real estate services including offer letter writing, paperwork handling, 
                 and ongoing consulting with a licensed agent and brokerage, contact us for custom pricing.
