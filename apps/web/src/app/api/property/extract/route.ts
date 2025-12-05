@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@real-estate/db'
+import { extractPropertyFromUrl, getSourceType } from '@/lib/property-extractor'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,40 +11,91 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine source type
-    let sourceType = 'unknown'
-    if (url.includes('zillow.com')) sourceType = 'zillow'
-    else if (url.includes('redfin.com')) sourceType = 'redfin'
-    else if (url.includes('realtor.com')) sourceType = 'realtor'
+    const sourceType = getSourceType(url)
 
-    // TODO: Implement actual property extraction from Zillow/Redfin
-    // For now, we'll create a placeholder property
-    // In production, you would:
-    // 1. Scrape or use APIs to extract property data
-    // 2. Parse MLS information
-    // 3. Extract listing agent details
-
-    const property = await prisma.property.upsert({
+    // First, check if property with this URL already exists
+    let property = await prisma.property.findUnique({
       where: { sourceUrl: url },
-      update: {},
-      create: {
-        sourceUrl: url,
-        sourceType,
-        address: 'Address to be extracted',
-        city: 'City to be extracted',
-        state: 'State to be extracted',
-        zipCode: 'Zip to be extracted',
-        // These would be extracted from the URL/page
-        price: null,
-        daysOnMarket: null,
-        mlsNumber: null,
-        listingAgentName: null,
-        listingAgentEmail: null,
-        listingAgentPhone: null,
-        offerDeadline: null,
-        hasHOA: null,
-        builtBefore1978: null,
+    })
+
+    if (property) {
+      // Property already exists, return it
+      return NextResponse.json({ propertyId: property.id })
+    }
+
+    // Extract property data using LLM
+    let extractedData
+    try {
+      extractedData = await extractPropertyFromUrl(url)
+    } catch (error) {
+      console.error('Error extracting property data:', error)
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Failed to extract property information' },
+        { status: 500 }
+      )
+    }
+
+    // Check if a property with the same address already exists
+    // This handles cases where the same property is listed on different sites
+    const existingProperty = await prisma.property.findFirst({
+      where: {
+        address: extractedData.address,
+        city: extractedData.city,
+        state: extractedData.state,
+        zipCode: extractedData.zipCode,
       },
     })
+
+    if (existingProperty) {
+      // Update the existing property with the new source URL if different
+      if (existingProperty.sourceUrl !== url) {
+        property = await prisma.property.update({
+          where: { id: existingProperty.id },
+          data: {
+            sourceUrl: url,
+            sourceType,
+            // Update other fields if they're missing in the existing record
+            price: existingProperty.price || extractedData.price,
+            daysOnMarket: existingProperty.daysOnMarket || extractedData.daysOnMarket,
+            mlsNumber: existingProperty.mlsNumber || extractedData.mlsNumber,
+            listingAgentName: existingProperty.listingAgentName || extractedData.listingAgentName,
+            listingAgentEmail: existingProperty.listingAgentEmail || extractedData.listingAgentEmail,
+            listingAgentPhone: existingProperty.listingAgentPhone || extractedData.listingAgentPhone,
+            offerDeadline: existingProperty.offerDeadline || extractedData.offerDeadline,
+            hasHOA: existingProperty.hasHOA ?? extractedData.hasHOA,
+            builtBefore1978: existingProperty.builtBefore1978 ?? extractedData.builtBefore1978,
+            extractedData: {
+              ...(existingProperty.extractedData as object || {}),
+              ...(extractedData as object),
+            },
+          },
+        })
+      } else {
+        property = existingProperty
+      }
+    } else {
+      // Create new property with extracted data
+      property = await prisma.property.create({
+        data: {
+          sourceUrl: url,
+          sourceType,
+          address: extractedData.address,
+          city: extractedData.city,
+          state: extractedData.state,
+          zipCode: extractedData.zipCode,
+          price: extractedData.price,
+          daysOnMarket: extractedData.daysOnMarket,
+          mlsNumber: extractedData.mlsNumber,
+          listingAgentName: extractedData.listingAgentName,
+          listingAgentEmail: extractedData.listingAgentEmail,
+          listingAgentPhone: extractedData.listingAgentPhone,
+          offerDeadline: extractedData.offerDeadline,
+          hasHOA: extractedData.hasHOA,
+          builtBefore1978: extractedData.builtBefore1978,
+          extractedData: extractedData as any, // Store additional fields in JSON
+        },
+      })
+    }
 
     return NextResponse.json({ propertyId: property.id })
   } catch (error) {
