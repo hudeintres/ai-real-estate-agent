@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
             sourceType,
             // Update other fields if they're missing in the existing record
             price: existingProperty.price || extractedData.price,
+            aiFairValue: existingProperty.aiFairValue || extractedData.aiFairValue,
             daysOnMarket: existingProperty.daysOnMarket || extractedData.daysOnMarket,
             mlsNumber: existingProperty.mlsNumber || extractedData.mlsNumber,
             listingAgentName: existingProperty.listingAgentName || extractedData.listingAgentName,
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
           state: extractedData.state,
           zipCode: extractedData.zipCode,
           price: extractedData.price,
+          aiFairValue: extractedData.aiFairValue,
           daysOnMarket: extractedData.daysOnMarket,
           mlsNumber: extractedData.mlsNumber,
           listingAgentName: extractedData.listingAgentName,

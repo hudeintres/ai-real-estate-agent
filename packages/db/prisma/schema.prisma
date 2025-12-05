@@ -54,6 +54,7 @@ model Property {
   state             String
   zipCode           String
   price             Float?
+  aiFairValue       Float?     // AI-generated fair market value for making reasonable offers
   daysOnMarket      Int?
   listingAgentName  String?
   listingAgentEmail String?

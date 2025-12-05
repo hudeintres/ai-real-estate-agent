@@ -10,6 +10,7 @@ export interface ExtractedPropertyData {
   state: string
   zipCode: string
   price: number | null
+  aiFairValue: number | null // AI-generated fair market value for making reasonable offers
   daysOnMarket: number | null
   mlsNumber: string | null
   listingAgentName: string | null
@@ -128,6 +129,7 @@ Extract and return a JSON object with these exact fields:
   "state": "state abbreviation (2 letters)",
   "zipCode": "zip code",
   "price": number or null,
+  "aiFairValue": number or null,
   "daysOnMarket": number or null,
   "mlsNumber": "MLS number string or null",
   "listingAgentName": "agent name or null",
@@ -143,6 +145,14 @@ Extract and return a JSON object with these exact fields:
   "yearBuilt": number or null,
   "propertyType": "property type string or null"
 }
+
+IMPORTANT: For "aiFairValue", analyze the property details (price, location, size, condition, market trends, comparable properties) and generate a reasonable fair market value that would be appropriate for making an offer. This should be a realistic valuation based on the property's characteristics, not just the listing price. Consider factors like:
+- Property condition and age
+- Square footage and lot size
+- Location and neighborhood
+- Market conditions and days on market
+- Comparable property values
+- Any issues or features that affect value
 
 Return ONLY valid JSON, no other text.`
     : `You are a real estate data extraction expert. I need you to extract property information from a real estate listing URL.
@@ -156,6 +166,7 @@ If you cannot access the URL directly, please inform me in your response. Otherw
   "state": "state abbreviation (2 letters)",
   "zipCode": "zip code",
   "price": number or null,
+  "aiFairValue": number or null,
   "daysOnMarket": number or null,
   "mlsNumber": "MLS number string or null",
   "listingAgentName": "agent name or null",
@@ -171,6 +182,14 @@ If you cannot access the URL directly, please inform me in your response. Otherw
   "yearBuilt": number or null,
   "propertyType": "property type string or null"
 }
+
+IMPORTANT: For "aiFairValue", analyze the property details (price, location, size, condition, market trends, comparable properties) and generate a reasonable fair market value that would be appropriate for making an offer. This should be a realistic valuation based on the property's characteristics, not just the listing price. Consider factors like:
+- Property condition and age
+- Square footage and lot size
+- Location and neighborhood
+- Market conditions and days on market
+- Comparable property values
+- Any issues or features that affect value
 
 Return ONLY valid JSON, no other text. If you cannot access the URL, return a JSON object with all fields set to null and include an "error" field explaining the issue.`
 
@@ -211,6 +230,7 @@ Return ONLY valid JSON, no other text. If you cannot access the URL, return a JS
       state: extractedData.state || 'State not found',
       zipCode: extractedData.zipCode || 'Zip not found',
       price: typeof extractedData.price === 'number' ? extractedData.price : null,
+      aiFairValue: typeof extractedData.aiFairValue === 'number' ? extractedData.aiFairValue : null,
       daysOnMarket: typeof extractedData.daysOnMarket === 'number' ? extractedData.daysOnMarket : null,
       mlsNumber: extractedData.mlsNumber || null,
       listingAgentName: extractedData.listingAgentName || null,

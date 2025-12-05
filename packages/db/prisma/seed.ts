@@ -83,6 +83,7 @@ async function main() {
       state: 'TX',
       zipCode: '78701',
       price: 450000,
+      aiFairValue: 435000, // Slightly below asking, considering 12 days on market
       daysOnMarket: 12,
       listingAgentName: 'Jennifer Realty',
       listingAgentEmail: 'jennifer@realty.com',
@@ -110,6 +111,7 @@ async function main() {
       state: 'TX',
       zipCode: '77002',
       price: 325000,
+      aiFairValue: 310000, // Lower due to older build (1975) and smaller size
       daysOnMarket: 8,
       listingAgentName: 'Michael Broker',
       listingAgentEmail: 'michael@broker.com',
@@ -137,6 +139,7 @@ async function main() {
       state: 'TX',
       zipCode: '75201',
       price: 550000,
+      aiFairValue: 525000, // Lower due to 25 days on market suggesting overpricing
       daysOnMarket: 25,
       listingAgentName: 'Amanda Sales',
       listingAgentEmail: 'amanda@sales.com',
@@ -164,6 +167,7 @@ async function main() {
       state: 'TX',
       zipCode: '78201',
       price: 280000,
+      aiFairValue: 275000, // Slightly below asking, but close since only 3 days on market
       daysOnMarket: 3,
       listingAgentName: 'Robert Agent',
       listingAgentEmail: 'robert@agent.com',
