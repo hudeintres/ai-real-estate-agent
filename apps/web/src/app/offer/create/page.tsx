@@ -7,6 +7,7 @@ interface PropertyData {
   id: string
   address: string
   price: number | null
+  aiFairValue: number | null
   daysOnMarket: number | null
   mlsNumber: string | null
 }
@@ -48,7 +49,10 @@ export default function CreateOfferPage() {
       .then((res) => res.json())
       .then((data) => {
         setProperty(data)
-        if (data.price) {
+        // Set default offer price to AI fair value if available, otherwise use listing price
+        if (data.aiFairValue) {
+          setOfferPrice(data.aiFairValue.toString())
+        } else if (data.price) {
           setOfferPrice(data.price.toString())
         }
       })
@@ -104,9 +108,14 @@ export default function CreateOfferPage() {
         <h1 className="text-3xl font-bold mb-6">Step 2: Offer Details</h1>
 
         <div className="bg-gray-50 p-4 rounded-lg mb-6">
-          <h2 className="font-semibold mb-2">Property Information</h2>
+          <h2 className="font-semibold mb-2 text-black">Property Information</h2>
           <p className="text-sm text-gray-600">{property.address}</p>
           {property.price && <p className="text-sm text-gray-600">List Price: ${property.price.toLocaleString()}</p>}
+          {property.aiFairValue && (
+            <p className="text-sm font-medium text-blue-600">
+              AI Fair Value: ${property.aiFairValue.toLocaleString()}
+            </p>
+          )}
           {property.mlsNumber && <p className="text-sm text-gray-600">MLS #: {property.mlsNumber}</p>}
         </div>
 
@@ -119,7 +128,7 @@ export default function CreateOfferPage() {
               id="financingType"
               value={financingType}
               onChange={(e) => setFinancingType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
             >
               <option value="cash">Cash</option>
               <option value="conventional">Conventional</option>
@@ -133,6 +142,19 @@ export default function CreateOfferPage() {
             <label htmlFor="offerPrice" className="block text-sm font-medium mb-2">
               Offer Price ($)
             </label>
+            <div className="mb-2 space-y-1">
+              {property.price && (
+                <p className="text-sm text-gray-600">
+                  Listing Price: <span className="font-medium">${property.price.toLocaleString()}</span>
+                </p>
+              )}
+              {property.aiFairValue && (
+                <p className="text-sm text-blue-600">
+                  AI Fair Value: <span className="font-medium">${property.aiFairValue.toLocaleString()}</span>
+                  <span className="ml-2 text-xs text-gray-500">(Recommended starting point)</span>
+                </p>
+              )}
+            </div>
             <input
               id="offerPrice"
               type="number"
@@ -140,8 +162,19 @@ export default function CreateOfferPage() {
               value={offerPrice}
               onChange={(e) => setOfferPrice(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+              placeholder={property.aiFairValue ? property.aiFairValue.toString() : property.price?.toString() || ''}
             />
+            {property.price && property.aiFairValue && offerPrice && (
+              <p className="mt-1 text-xs text-gray-500">
+                Difference from listing: {((parseFloat(offerPrice) - property.price) / property.price * 100).toFixed(1)}%
+                {property.aiFairValue < property.price && (
+                  <span className="ml-2 text-green-600">
+                    (AI suggests {((property.aiFairValue - property.price) / property.price * 100).toFixed(1)}% below listing)
+                  </span>
+                )}
+              </p>
+            )}
           </div>
 
           <div>
