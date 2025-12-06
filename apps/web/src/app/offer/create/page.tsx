@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 interface PropertyData {
   id: string
   address: string
+  city: string
+  state: string
+  zipCode: string
   price: number | null
   aiFairValue: number | null
   daysOnMarket: number | null
@@ -60,6 +63,39 @@ export default function CreateOfferPage() {
       .finally(() => setLoading(false))
   }, [propertyId, router])
 
+  // Helper function to get date string in YYYY-MM-DD format
+  const getDateString = (daysFromToday: number): string => {
+    const date = new Date()
+    date.setDate(date.getDate() + daysFromToday)
+    return date.toISOString().split('T')[0]
+  }
+
+  // Helper function to format date for display
+  const formatDateDisplay = (dateString: string): string => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  // Suggested closing dates
+  const suggestedDates = [
+    { days: 30, label: '30 days' },
+    { days: 45, label: '45 days' },
+    { days: 60, label: '60 days' },
+  ]
+
+  const handleSuggestedDateClick = (days: number) => {
+    const dateString = getDateString(days)
+    setTimelinePreferences({ ...timelinePreferences, closingDate: dateString })
+  }
+
+  // Validate required fields
+  const isFormValid = 
+    financingType.trim() !== '' &&
+    offerPrice.trim() !== '' &&
+    !isNaN(parseFloat(offerPrice)) &&
+    parseFloat(offerPrice) > 0 &&
+    timelinePreferences.closingDate.trim() !== ''
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
@@ -109,7 +145,7 @@ export default function CreateOfferPage() {
 
         <div className="bg-gray-50 p-4 rounded-lg mb-6">
           <h2 className="font-semibold mb-2 text-black">Property Information</h2>
-          <p className="text-sm text-gray-600">{property.address}</p>
+          <p className="text-sm text-gray-600">{property.address}, {property.city}, {property.state} {property.zipCode}</p>
           {property.price && <p className="text-sm text-gray-600">List Price: ${property.price.toLocaleString()}</p>}
           {property.aiFairValue && (
             <p className="text-sm font-medium text-blue-600">
@@ -122,12 +158,13 @@ export default function CreateOfferPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="financingType" className="block text-sm font-medium mb-2">
-              Financing Type
+              Financing Type <span className="text-red-500">*</span>
             </label>
             <select
               id="financingType"
               value={financingType}
               onChange={(e) => setFinancingType(e.target.value)}
+              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
             >
               <option value="cash">Cash</option>
@@ -140,7 +177,7 @@ export default function CreateOfferPage() {
 
           <div>
             <label htmlFor="offerPrice" className="block text-sm font-medium mb-2">
-              Offer Price ($)
+              Offer Price ($) <span className="text-red-500">*</span>
             </label>
             <div className="mb-2 space-y-1">
               {property.price && (
@@ -218,8 +255,28 @@ export default function CreateOfferPage() {
 
           <div>
             <label htmlFor="closingDate" className="block text-sm font-medium mb-2">
-              Preferred Closing Date
+              Preferred Closing Date <span className="text-red-500">*</span>
             </label>
+            <div className="mb-2 flex gap-2 flex-wrap">
+              {suggestedDates.map((suggestion) => {
+                const dateString = getDateString(suggestion.days)
+                const isSelected = timelinePreferences.closingDate === dateString
+                return (
+                  <button
+                    key={suggestion.days}
+                    type="button"
+                    onClick={() => handleSuggestedDateClick(suggestion.days)}
+                    className={`px-3 py-1.5 text-sm rounded-lg border transition ${
+                      isSelected
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                    }`}
+                  >
+                    {suggestion.label} ({formatDateDisplay(dateString)})
+                  </button>
+                )
+              })}
+            </div>
             <input
               id="closingDate"
               type="date"
@@ -227,7 +284,8 @@ export default function CreateOfferPage() {
               onChange={(e) =>
                 setTimelinePreferences({ ...timelinePreferences, closingDate: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
             />
           </div>
 
@@ -243,7 +301,7 @@ export default function CreateOfferPage() {
               onChange={(e) =>
                 setConcessions({ ...concessions, sellerCredits: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
             />
           </div>
 
@@ -256,14 +314,14 @@ export default function CreateOfferPage() {
               value={additionalNotes}
               onChange={(e) => setAdditionalNotes(e.target.value)}
               rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
             />
           </div>
 
           <button
             type="submit"
-            disabled={submitting}
-            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            disabled={!isFormValid || submitting}
+            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? 'Creating Offer...' : 'Generate Offer Letter'}
           </button>
