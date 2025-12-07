@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@real-estate/db'
+import fs from 'fs/promises'
+import path from 'path'
 
 export async function GET(
   request: NextRequest,
@@ -44,14 +46,33 @@ export async function GET(
       )
     }
 
-    // If there's a URL to the actual document, redirect to it
+    // If there's a URL to the actual PDF document, serve it
     if (offer.offerLetterUrl) {
-      return NextResponse.redirect(offer.offerLetterUrl)
+      // If it's a local path (starts with /offers/), read the file
+      if (offer.offerLetterUrl.startsWith('/offers/')) {
+        const pdfPath = path.join(process.cwd(), 'public', offer.offerLetterUrl)
+        try {
+          const pdfBuffer = await fs.readFile(pdfPath)
+          return new NextResponse(pdfBuffer, {
+            headers: {
+              'Content-Type': 'application/pdf',
+              'Content-Disposition': `attachment; filename="offer-letter-${params.offerId}.pdf"`,
+            },
+          })
+        } catch (fileError) {
+          console.error('Error reading PDF file:', fileError)
+          return NextResponse.json(
+            { error: 'PDF file not found' },
+            { status: 404 }
+          )
+        }
+      } else {
+        // External URL, redirect to it
+        return NextResponse.redirect(offer.offerLetterUrl)
+      }
     }
 
-    // Otherwise, generate a simple PDF or return the preview as text
-    // For now, we'll return the preview as plain text
-    // In production, you'd generate an actual PDF
+    // Otherwise, return the preview as text (fallback)
     const content = offer.offerLetterPreview || 'Offer letter not available'
 
     return new NextResponse(content, {

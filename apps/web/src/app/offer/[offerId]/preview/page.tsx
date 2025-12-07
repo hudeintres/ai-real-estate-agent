@@ -7,6 +7,7 @@ import Link from 'next/link'
 interface OfferData {
   id: string
   offerLetterPreview: string | null
+  offerLetterUrl: string | null
   status: string
   property: {
     address: string
@@ -49,12 +50,37 @@ export default function OfferPreviewPage() {
         <h1 className="text-3xl font-bold mb-6">Offer Letter Preview</h1>
 
         <div className="bg-gray-50 p-6 rounded-lg mb-6">
-          <h2 className="font-semibold mb-2">Property: {offer.property.address}</h2>
+          <h2 className="font-semibold mb-2 text-black">Property: {offer.property.address}</h2>
         </div>
 
         <div className="bg-white border border-gray-200 p-6 rounded-lg mb-6">
-          <h2 className="text-xl font-semibold mb-4">Preview</h2>
-          {offer.offerLetterPreview ? (
+          <h2 className="text-xl font-semibold mb-4 text-black">Preview</h2>
+          {offer.offerLetterUrl ? (
+            <div className="w-full">
+              <iframe
+                src={offer.offerLetterUrl}
+                className="w-full h-[800px] border border-gray-300 rounded-lg"
+                title="Offer Letter Preview"
+              />
+              <div className="mt-4 flex gap-4">
+                <a
+                  href={offer.offerLetterUrl}
+                  download
+                  className="text-blue-600 hover:underline"
+                >
+                  Download PDF
+                </a>
+                <a
+                  href={offer.offerLetterUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  Open in New Tab
+                </a>
+              </div>
+            </div>
+          ) : offer.offerLetterPreview ? (
             <div className="prose max-w-none">
               <pre className="whitespace-pre-wrap text-sm">{offer.offerLetterPreview}</pre>
             </div>

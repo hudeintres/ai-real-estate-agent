@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@real-estate/db'
 import { sendOfferNotification } from '@/lib/email'
+import { generateOfferLetterPDF } from '@/lib/pdf-generator'
+import fs from 'fs/promises'
+import path from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,6 +33,18 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Get property details
+    const property = await prisma.property.findUnique({
+      where: { id: propertyId },
+    })
+
+    if (!property) {
+      return NextResponse.json(
+        { error: 'Property not found' },
+        { status: 404 }
+      )
+    }
+
     // Create the offer
     const offer = await prisma.offer.create({
       data: {
@@ -41,13 +56,70 @@ export async function POST(request: NextRequest) {
         timelinePreferences: timelinePreferences as any,
         concessions: concessions as any,
         additionalNotes,
-        status: 'PENDING_REVIEW',
-        offerLetterPreview: null, // Will be generated manually for now
+        status: 'GENERATED',
+        offerLetterPreview: null,
       },
       include: {
         property: true,
       },
     })
+
+    // Generate PDF offer letter
+    let offerLetterUrl: string | null = null
+    try {
+      // Prepare offer data for PDF generation
+      const offerData = {
+        propertyAddress: property.address,
+        city: property.city,
+        state: property.state,
+        zipCode: property.zipCode,
+        offerPrice: offerPrice,
+        closingDate: (timelinePreferences as any)?.closingDate || '',
+        financingType: financingType,
+        buyerName: user.name || undefined,
+        buyerEmail: user.email,
+        mlsNumber: property.mlsNumber || undefined,
+        listingAgentName: property.listingAgentName || undefined,
+        listingAgentEmail: property.listingAgentEmail || undefined,
+        listingAgentPhone: property.listingAgentPhone || undefined,
+        sellerCredits: (concessions as any)?.sellerCredits 
+          ? parseFloat((concessions as any).sellerCredits) 
+          : undefined,
+        additionalNotes: additionalNotes || undefined,
+      }
+
+      // Generate the PDF
+      const pdfBytes = await generateOfferLetterPDF(offerData, property.propertyType)
+
+      // Create public/offers directory if it doesn't exist
+      const publicOffersDir = path.join(process.cwd(), 'public', 'offers')
+      try {
+        await fs.access(publicOffersDir)
+      } catch {
+        await fs.mkdir(publicOffersDir, { recursive: true })
+      }
+
+      // Save PDF to public directory
+      const pdfFilename = `offer-${offer.id}.pdf`
+      const pdfPath = path.join(publicOffersDir, pdfFilename)
+      await fs.writeFile(pdfPath, pdfBytes)
+
+      // Set the URL (accessible via /offers/filename.pdf)
+      offerLetterUrl = `/offers/${pdfFilename}`
+
+      // Update offer with PDF URL
+      await prisma.offer.update({
+        where: { id: offer.id },
+        data: {
+          offerLetterUrl,
+          status: 'GENERATED',
+        },
+      })
+    } catch (pdfError) {
+      console.error('Error generating PDF offer letter:', pdfError)
+      // Don't fail the request if PDF generation fails, but log the error
+      // The offer is still created, just without the PDF
+    }
 
     // Send email notification
     try {
