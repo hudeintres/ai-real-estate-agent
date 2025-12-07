@@ -20,11 +20,12 @@ export default function CreateOfferPage() {
   const searchParams = useSearchParams()
   const propertyId = searchParams.get('propertyId')
 
-  const [property, setProperty] = useState<PropertyData | null>(null)
-  const [loading, setLoading] = useState(true)
+  // const [property, setProperty] = useState<PropertyData | null>(null)
+  // const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
   // Form state
+  const [address, setAddress] = useState('')
   const [financingType, setFinancingType] = useState('conventional')
   const [offerPrice, setOfferPrice] = useState('')
   const [contingencies, setContingencies] = useState({
@@ -42,26 +43,26 @@ export default function CreateOfferPage() {
   })
   const [additionalNotes, setAdditionalNotes] = useState('')
 
-  useEffect(() => {
-    if (!propertyId) {
-      router.push('/property')
-      return
-    }
+  // useEffect(() => {
+  //   if (!propertyId) {
+  //     router.push('/property')
+  //     return
+  //   }
 
-    fetch(`/api/property/${propertyId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProperty(data)
-        // Set default offer price to AI fair value if available, otherwise use listing price
-        if (data.aiFairValue) {
-          setOfferPrice(data.aiFairValue.toString())
-        } else if (data.price) {
-          setOfferPrice(data.price.toString())
-        }
-      })
-      .catch(() => router.push('/property'))
-      .finally(() => setLoading(false))
-  }, [propertyId, router])
+  //   fetch(`/api/property/${propertyId}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setProperty(data)
+  //       // Set default offer price to AI fair value if available, otherwise use listing price
+  //       if (data.aiFairValue) {
+  //         setOfferPrice(data.aiFairValue.toString())
+  //       } else if (data.price) {
+  //         setOfferPrice(data.price.toString())
+  //       }
+  //     })
+  //     .catch(() => router.push('/property'))
+  //     .finally(() => setLoading(false))
+  // }, [propertyId, router])
 
   // Helper function to get date string in YYYY-MM-DD format
   const getDateString = (daysFromToday: number): string => {
@@ -126,24 +127,24 @@ export default function CreateOfferPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <main className="min-h-screen p-8">
-        <div className="max-w-2xl mx-auto">Loading...</div>
-      </main>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <main className="min-h-screen p-8">
+  //       <div className="max-w-2xl mx-auto">Loading...</div>
+  //     </main>
+  //   )
+  // }
 
-  if (!property) {
-    return null
-  }
+  // if (!property) {
+  //   return null
+  // }
 
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Step 2: Offer Details</h1>
+        <h1 className="text-3xl font-bold mb-6">Step 1: Offer Details</h1>
 
-        <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        {/* <div className="bg-gray-50 p-4 rounded-lg mb-6">
           <h2 className="font-semibold mb-2 text-black">Property Information</h2>
           <p className="text-sm text-gray-600">{property.address}, {property.city}, {property.state} {property.zipCode}</p>
           {property.price && <p className="text-sm text-gray-600">List Price: ${property.price.toLocaleString()}</p>}
@@ -153,9 +154,22 @@ export default function CreateOfferPage() {
             </p>
           )}
           {property.mlsNumber && <p className="text-sm text-gray-600">MLS #: {property.mlsNumber}</p>}
-        </div>
+        </div> */}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium mb-2">
+              Address <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="address"
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+            />
+          </div>
           <div>
             <label htmlFor="financingType" className="block text-sm font-medium mb-2">
               Financing Type <span className="text-red-500">*</span>
@@ -180,7 +194,7 @@ export default function CreateOfferPage() {
               Offer Price ($) <span className="text-red-500">*</span>
             </label>
             <div className="mb-2 space-y-1">
-              {property.price && (
+              {/* {property.price && (
                 <p className="text-sm text-gray-600">
                   Listing Price: <span className="font-medium">${property.price.toLocaleString()}</span>
                 </p>
@@ -190,7 +204,7 @@ export default function CreateOfferPage() {
                   AI Fair Value: <span className="font-medium">${property.aiFairValue.toLocaleString()}</span>
                   <span className="ml-2 text-xs text-gray-500">(Recommended starting point)</span>
                 </p>
-              )}
+              )} */}
             </div>
             <input
               id="offerPrice"
@@ -200,9 +214,9 @@ export default function CreateOfferPage() {
               onChange={(e) => setOfferPrice(e.target.value)}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder={property.aiFairValue ? property.aiFairValue.toString() : property.price?.toString() || ''}
+              // placeholder={property.aiFairValue ? property.aiFairValue.toString() : property.price?.toString() || ''}
             />
-            {property.price && property.aiFairValue && offerPrice && (
+            {/* {property.price && property.aiFairValue && offerPrice && (
               <p className="mt-1 text-xs text-gray-500">
                 Difference from listing: {((parseFloat(offerPrice) - property.price) / property.price * 100).toFixed(1)}%
                 {property.aiFairValue < property.price && (
@@ -211,7 +225,7 @@ export default function CreateOfferPage() {
                   </span>
                 )}
               </p>
-            )}
+            )} */}
           </div>
 
           <div>

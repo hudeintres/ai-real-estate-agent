@@ -81,7 +81,7 @@ export default function Home() {
               <a href="#faq" className="text-gray-700 hover:text-blue-600 transition">FAQ</a>
             </div>
             <Link
-              href="/property"
+              href="/offer/create"
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
             >
               Get Started
@@ -104,7 +104,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/property"
+                href="/offer/create"
                 className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
               >
                 Start Your Offer
@@ -368,7 +368,7 @@ export default function Home() {
                     {pricingTiers.map((tier) => (
                       <td key={`cta-${tier.key}`} className="py-6 px-6 text-center">
                         <Link
-                          href="/property"
+                          href="/offer/create"
                           className={`${tier.buttonColor} text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition`}
                         >
                           {tier.cta}
@@ -392,7 +392,7 @@ export default function Home() {
                   <h3 className="text-3xl font-bold text-gray-900 mb-2">$20 / month</h3>
                   <p className="text-gray-600 mb-4">Unlimited AI offer letters + chatbot access</p>
                   <Link
-                    href="/property"
+                    href="/offer/create"
                     className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
                   >
                     Subscribe
