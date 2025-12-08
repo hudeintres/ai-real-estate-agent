@@ -82,6 +82,7 @@ async function main() {
       city: 'Austin',
       state: 'TX',
       zipCode: '78701',
+      propertyType: 'singlefamily',
       price: 450000,
       aiFairValue: 435000, // Slightly below asking, considering 12 days on market
       daysOnMarket: 12,
@@ -110,6 +111,7 @@ async function main() {
       city: 'Houston',
       state: 'TX',
       zipCode: '77002',
+      propertyType: 'condo',
       price: 325000,
       aiFairValue: 310000, // Lower due to older build (1975) and smaller size
       daysOnMarket: 8,
@@ -138,6 +140,7 @@ async function main() {
       city: 'Dallas',
       state: 'TX',
       zipCode: '75201',
+      propertyType: 'singlefamily',
       price: 550000,
       aiFairValue: 525000, // Lower due to 25 days on market suggesting overpricing
       daysOnMarket: 25,
@@ -166,6 +169,7 @@ async function main() {
       city: 'San Antonio',
       state: 'TX',
       zipCode: '78201',
+      propertyType: 'singlefamily',
       price: 280000,
       aiFairValue: 275000, // Slightly below asking, but close since only 3 days on market
       daysOnMarket: 3,

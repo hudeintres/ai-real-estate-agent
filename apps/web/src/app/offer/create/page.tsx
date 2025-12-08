@@ -25,7 +25,11 @@ export default function CreateOfferPage() {
   const [submitting, setSubmitting] = useState(false)
 
   // Form state
-  const [address, setAddress] = useState('')
+  const [address, setAddress] = useState('') // street address
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [zipCode, setZipCode] = useState('')
+  const [propertyType, setPropertyType] = useState('')
   const [financingType, setFinancingType] = useState('conventional')
   const [offerPrice, setOfferPrice] = useState('')
   const [contingencies, setContingencies] = useState({
@@ -91,6 +95,10 @@ export default function CreateOfferPage() {
 
   // Validate required fields
   const isFormValid = 
+    address.trim() !== '' &&
+    city.trim() !== '' &&
+    state.trim() !== '' &&
+    zipCode.trim() !== '' &&
     financingType.trim() !== '' &&
     offerPrice.trim() !== '' &&
     !isNaN(parseFloat(offerPrice)) &&
@@ -106,7 +114,10 @@ export default function CreateOfferPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          propertyId,
+          address,
+          city,
+          state,
+          zipCode,
           financingType,
           offerPrice: parseFloat(offerPrice),
           contingencies,
@@ -169,6 +180,123 @@ export default function CreateOfferPage() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="city" className="block text-sm font-medium mb-2">
+                City <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="city"
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="state" className="block text-sm font-medium mb-2">
+                State <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="state"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+              >
+                <option value="">Select a state</option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="zipCode" className="block text-sm font-medium mb-2">
+                ZIP Code <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="zipCode"
+                type="text"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                required
+                pattern="[0-9]{5}(-[0-9]{4})?"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="propertyType" className="block text-sm font-medium mb-2">
+              Property Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="propertyType"
+              value={propertyType}
+              onChange={(e) => setPropertyType(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+            >
+              <option value="singlefamily">Single Family</option>
+              <option value="multifamily">Multifamily</option>
+              <option value="condominium">Condominium</option>
+              <option value="townhouse">Townhouse</option>
+              <option value="cooperative">Cooperative</option>
+              <option value="land">Land</option>
+              <option value="commercial">Commercial</option>
+              <option value="other">Other</option>
+            </select>
           </div>
           <div>
             <label htmlFor="financingType" className="block text-sm font-medium mb-2">

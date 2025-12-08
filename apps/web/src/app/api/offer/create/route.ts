@@ -8,7 +8,11 @@ import path from 'path'
 export async function POST(request: NextRequest) {
   try {
     const {
-      propertyId,
+      address,
+      city,
+      state,
+      zipCode,
+      propertyType,
       financingType,
       offerPrice,
       contingencies,
@@ -33,23 +37,33 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Get property details
-    const property = await prisma.property.findUnique({
-      where: { id: propertyId },
+    // Create the property if it doesn't exist
+    let property = await prisma.property.findFirst({
+      where: {
+        address,
+        city,
+        state,
+        zipCode,
+        propertyType,
+      },
     })
-
     if (!property) {
-      return NextResponse.json(
-        { error: 'Property not found' },
-        { status: 404 }
-      )
+      property = await prisma.property.create({
+        data: {
+          address,
+          city,
+          state,
+          zipCode,
+          propertyType,
+        },
+      })
     }
 
     // Create the offer
     const offer = await prisma.offer.create({
       data: {
         userId: user.id,
-        propertyId,
+        propertyId: property.id,
         financingType,
         offerPrice,
         contingencies: contingencies as any,
@@ -69,19 +83,16 @@ export async function POST(request: NextRequest) {
     try {
       // Prepare offer data for PDF generation
       const offerData = {
-        propertyAddress: property.address,
-        city: property.city,
-        state: property.state,
-        zipCode: property.zipCode,
+        propertyAddress: address,
+        city: city,
+        state: state,
+        zipCode: zipCode,
+        propertyType: propertyType,
         offerPrice: offerPrice,
         closingDate: (timelinePreferences as any)?.closingDate || '',
         financingType: financingType,
         buyerName: user.name || undefined,
         buyerEmail: user.email,
-        mlsNumber: property.mlsNumber || undefined,
-        listingAgentName: property.listingAgentName || undefined,
-        listingAgentEmail: property.listingAgentEmail || undefined,
-        listingAgentPhone: property.listingAgentPhone || undefined,
         sellerCredits: (concessions as any)?.sellerCredits 
           ? parseFloat((concessions as any).sellerCredits) 
           : undefined,
@@ -89,7 +100,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Generate the PDF
-      const pdfBytes = await generateOfferLetterPDF(offerData, property.propertyType)
+      const pdfBytes = await generateOfferLetterPDF(offerData, propertyType)
 
       // Create public/offers directory if it doesn't exist
       const publicOffersDir = path.join(process.cwd(), 'public', 'offers')
