@@ -2,24 +2,15 @@
   "name": "ai-real-estate-agent",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "npm@10.0.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "db:generate": "turbo run db:generate",
-    "db:migrate": "turbo run db:migrate",
-    "db:studio": "turbo run db:studio",
-    "db:seed": "turbo run db:seed"
-  },
-  "devDependencies": {
-    "turbo": "^2.0.0",
-    "typescript": "^5.3.3"
+    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && source venv/bin/activate && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "build:frontend": "cd frontend && npm run build",
+    "start:frontend": "cd frontend && npm run start",
+    "start:backend": "cd backend && source venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "lint": "cd frontend && npm run lint",
+    "test:backend": "cd backend && source venv/bin/activate && pytest"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -43,3 +43,5 @@ yarn-error.log*
 # Prisma
 packages/db/prisma/migrations/
 
+.pytest_cache
+venv

@@ -1,0 +1,164 @@
+# AI Real Estate Agent - FastAPI Backend
+
+A FastAPI backend for the AI Real Estate Agent platform that helps users generate offer letters and handle property purchase paperwork.
+
+## Features
+
+- **Property Extraction**: Extract property information from real estate listing URLs using Google's Gemini AI
+- **Offer Creation**: Create and manage real estate offers
+- **PDF Generation**: Generate offer letter PDFs from templates
+- **Payment Processing**: Stripe integration for payments
+- **SQLite Database**: Lightweight SQLite database for data persistence
+
+## Prerequisites
+
+- Python 3.10+
+- pip or pipenv
+
+## Installation
+
+### 1. Create and activate a virtual environment
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Set up environment variables
+
+Copy the example environment file and update with your values:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your configuration:
+
+```env
+DATABASE_URL=sqlite+aiosqlite:///./real_estate.db
+APP_URL=http://localhost:8000
+DEBUG=true
+GOOGLE_AI_API_KEY=your_google_ai_api_key
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NOTIFICATION_EMAIL=your-email@example.com
+```
+
+### 4. Run the application
+
+```bash
+# Development mode with auto-reload
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Or using the module directly
+python -m app.main
+```
+
+The API will be available at:
+- API: http://localhost:8000
+- API Documentation (Swagger): http://localhost:8000/docs
+- API Documentation (ReDoc): http://localhost:8000/redoc
+
+## API Endpoints
+
+### Property
+
+- `POST /api/property/extract` - Extract property information from a URL
+- `GET /api/property/{property_id}` - Get property by ID
+
+### Offer
+
+- `POST /api/offer/create` - Create a new offer
+- `GET /api/offer/{offer_id}` - Get offer by ID
+- `GET /api/offer/{offer_id}/download` - Download offer letter PDF (requires payment)
+
+### Payment
+
+- `POST /api/payment/create-checkout` - Create a Stripe checkout session
+- `GET /api/payment/verify` - Verify payment status
+
+### Webhooks
+
+- `POST /api/webhooks/stripe` - Handle Stripe webhook events
+
+## Database
+
+The application uses SQLite by default. The database file (`real_estate.db`) will be created automatically in the backend directory when you first run the application.
+
+### Models
+
+- **User**: User accounts
+- **Property**: Real estate property information
+- **Offer**: Purchase offers on properties
+- **Payment**: Payment records
+- **Subscription**: User subscriptions
+
+## Development
+
+### Running Tests
+
+```bash
+pytest
+```
+
+### Code Formatting
+
+```bash
+black app/
+ruff check app/ --fix
+```
+
+### Type Checking
+
+```bash
+mypy app/
+```
+
+## Directory Structure
+
+```
+backend/
+├── app/
+│   ├── api/              # API routes
+│   │   ├── property.py
+│   │   ├── offer.py
+│   │   ├── payment.py
+│   │   └── webhooks.py
+│   ├── models/           # SQLAlchemy models
+│   │   ├── user.py
+│   │   ├── property.py
+│   │   ├── offer.py
+│   │   ├── payment.py
+│   │   └── subscription.py
+│   ├── schemas/          # Pydantic schemas
+│   │   ├── user.py
+│   │   ├── property.py
+│   │   ├── offer.py
+│   │   └── payment.py
+│   ├── utils/            # Utility functions
+│   │   ├── property_extractor.py
+│   │   ├── pdf_generator.py
+│   │   └── email.py
+│   ├── config.py         # Application configuration
+│   ├── database.py       # Database setup
+│   └── main.py           # FastAPI application
+├── templates/            # PDF templates by state
+│   └── tx/
+│       ├── singlefamily-resale.pdf
+│       └── condo-resale.pdf
+├── offers/               # Generated offer PDFs
+├── requirements.txt      # Python dependencies
+├── pyproject.toml        # Project configuration
+├── .env.example          # Example environment file
+└── README.md             # This file
+```
+
+## License
+
+Private - All rights reserved
